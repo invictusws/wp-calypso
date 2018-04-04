@@ -14,7 +14,7 @@ import Main from 'components/main';
 import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import Chart from './store-stats-chart';
+import Chart from './store-stats-orders-chart';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import Module from './store-stats-module';
@@ -28,7 +28,7 @@ import {
 	topCategories,
 	topCoupons,
 } from 'woocommerce/app/store-stats/constants';
-import { getUnitPeriod, getEndPeriod, getQueries, getWidgetPath } from './utils';
+import { getEndPeriod, getQueries, getWidgetPath } from './utils';
 import QuerySiteStats from 'components/data/query-site-stats';
 import config from 'config';
 import StoreStatsReferrerWidget from './store-stats-referrer-widget';
@@ -46,8 +46,7 @@ class StoreStats extends Component {
 	};
 
 	render() {
-		const { path, queryDate, selectedDate, siteId, slug, unit, queryParams } = this.props;
-		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
+		const { queryDate, selectedDate, siteId, slug, unit, queryParams } = this.props;
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
 		const { orderQuery, referrerQuery } = getQueries( unit, queryDate );
 		const { topListQuery } = getQueries( unit, selectedDate );
@@ -73,11 +72,11 @@ class StoreStats extends Component {
 					interval={ unit }
 				/>
 				<Chart
-					path={ path }
 					query={ orderQuery }
 					selectedDate={ endSelectedDate }
 					siteId={ siteId }
 					unit={ unit }
+					slug={ slug }
 				/>
 				<StatsPeriodNavigation
 					date={ selectedDate }
@@ -127,7 +126,7 @@ class StoreStats extends Component {
 								siteId={ siteId }
 								query={ referrerQuery }
 								statType="statsStoreReferrers"
-								unitSelectedDate={ unitSelectedDate }
+								endSelectedDate={ endSelectedDate }
 								limit={ 5 }
 								pageType="orders"
 							/>

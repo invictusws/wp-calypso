@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getUnitPeriod } from 'woocommerce/app/store-stats/utils';
+import { getEndPeriod } from 'woocommerce/app/store-stats/utils';
 import StoreStatsPeriodNav from 'woocommerce/app/store-stats/store-stats-period-nav';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
@@ -23,9 +23,11 @@ import Module from 'woocommerce/app/store-stats/store-stats-module';
 import SearchCard from 'components/search-card';
 import StoreStatsReferrerWidget from 'woocommerce/app/store-stats/store-stats-referrer-widget';
 import { sortBySales } from 'woocommerce/app/store-stats/referrers/helpers';
-import { getStoreReferrers } from 'state/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
+import { getStoreReferrersByDate } from 'state/selectors';
+import Chart from './chart';
+import { UNITS } from 'woocommerce/app/store-stats/constants';
 
 const STAT_TYPE = 'statsStoreReferrers';
 const LIMIT = 10;
@@ -43,6 +45,7 @@ class Referrers extends Component {
 
 	state = {
 		filter: '',
+		selectedReferrer: {},
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -75,8 +78,8 @@ class Referrers extends Component {
 			return false;
 		} );
 		return {
-			selectedReferrer,
-			selectedReferrerIndex,
+			selectedReferrer: selectedReferrer || filteredSortedData[ 0 ] || {},
+			selectedReferrerIndex: selectedReferrerIndex || 0,
 		};
 	};
 
@@ -104,11 +107,17 @@ class Referrers extends Component {
 			selectedReferrer,
 			selectedReferrerIndex,
 		} = this.state;
-		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
+		const endSelectedDate = getEndPeriod( selectedDate, unit );
 		const showSearch = unfilteredDataLength > LIMIT;
 		const title = `${ translate( 'Store Referrers' ) }${
-			queryParams.referrer ? ' - ' + queryParams.referrer : ''
+			queryParams.referrer ? ': ' + queryParams.referrer : ''
 		}`;
+		const chartFormat = UNITS[ unit ].chartFormat;
+		const periodNavQueryParams = Object.assign(
+			{ referrer: selectedReferrer.referrer },
+			queryParams
+		);
+
 		return (
 			<Main className="referrers woocommerce" wideLayout>
 				<PageViewTracker
@@ -124,8 +133,26 @@ class Referrers extends Component {
 					query={ query }
 					statType={ STAT_TYPE }
 					title={ title }
-					queryParams={ queryParams }
+					queryParams={ periodNavQueryParams }
 				/>
+				<Module
+					className="referrers__chart"
+					siteId={ siteId }
+					emptyMessage={ translate( 'No data found' ) }
+					query={ query }
+					statType={ STAT_TYPE }
+				>
+					<Chart
+						selectedDate={ endSelectedDate }
+						selectedReferrer={ queryParams.referrer }
+						chartFormat={ chartFormat }
+						unit={ unit }
+						slug={ slug }
+						siteId={ siteId }
+						statType
+						query={ query }
+					/>
+				</Module>
 				<Module
 					className="referrers__search"
 					siteId={ siteId }
@@ -148,30 +175,16 @@ class Referrers extends Component {
 						siteId={ siteId }
 						query={ query }
 						statType={ STAT_TYPE }
-						unitSelectedDate={ unitSelectedDate }
+						endSelectedDate={ endSelectedDate }
 						queryParams={ queryParams }
 						slug={ slug }
 						limit={ LIMIT }
 						pageType="referrers"
 						paginate
 						selectedIndex={ selectedReferrerIndex }
-						selectedReferrer={ selectedReferrer && selectedReferrer.referrer }
+						selectedReferrer={ selectedReferrer.referrer }
 					/>
 				</Module>
-				{ selectedReferrer && (
-					<table>
-						<tbody>
-							<tr key={ selectedReferrer.referrer }>
-								<td>{ selectedReferrer.date }</td>
-								<td>{ selectedReferrer.referrer }</td>
-								<td>{ selectedReferrer.product_views }</td>
-								<td>{ selectedReferrer.add_to_carts }</td>
-								<td>{ selectedReferrer.product_purchases }</td>
-								<td>${ selectedReferrer.sales }</td>
-							</tr>
-						</tbody>
-					</table>
-				) }
 				<JetpackColophon />
 			</Main>
 		);
@@ -183,11 +196,11 @@ export default connect( ( state, { query, selectedDate, unit } ) => {
 	return {
 		slug: getSelectedSiteSlug( state ),
 		siteId,
-		data: getStoreReferrers( state, {
+		data: getStoreReferrersByDate( state, {
 			query,
 			siteId,
 			statType: STAT_TYPE,
-			unitSelectedDate: getUnitPeriod( selectedDate, unit ),
+			endSelectedDate: getEndPeriod( selectedDate, unit ),
 		} ),
 	};
 } )( localize( Referrers ) );

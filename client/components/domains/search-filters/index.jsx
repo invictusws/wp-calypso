@@ -11,7 +11,6 @@ import { pick, noop } from 'lodash';
  * Internal dependencies
  */
 import MoreFiltersControl from './more-filters';
-import TldFilterControl from './tld-filter';
 
 export default class SearchFilters extends Component {
 	static propTypes = {
@@ -50,11 +49,6 @@ export default class SearchFilters extends Component {
 					] ) }
 					onChange={ this.updateFilterValues }
 					{ ...pick( this.props, [ 'onFiltersReset', 'onFiltersSubmit' ] ) }
-				/>
-				<TldFilterControl
-					{ ...pick( this.props.filters, [ 'tlds' ] ) }
-					onChange={ this.updateFilterValues }
-					{ ...pick( this.props, [ 'availableTlds', 'onFiltersReset', 'onFiltersSubmit' ] ) }
 				/>
 			</div>
 		);

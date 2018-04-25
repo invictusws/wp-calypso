@@ -33,9 +33,7 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import wpcom from 'lib/wp';
-import Button from 'components/button';
 import Card from 'components/card';
-import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
 import { checkDomainAvailability, getFixedDomainSearch, getAvailableTlds } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
@@ -47,6 +45,7 @@ import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
 import SearchFilters from 'components/domains/search-filters';
+import TldFilterBar from 'components/domains/search-filters/tld-filter-bar';
 import { getCurrentUser } from 'state/current-user/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
@@ -376,28 +375,6 @@ class RegisterDomainStep extends React.Component {
 						onFiltersSubmit={ this.onFiltersSubmit }
 					/>
 				</div>
-			)
-		);
-	}
-
-	renderTldButtons() {
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/filters' );
-		const { availableTlds, lastFilters: { tlds: selectedTlds } } = this.state;
-		return (
-			isKrackenUi && (
-				<CompactCard className="register-domain-step__tld-buttons">
-					{ availableTlds.slice( 0, 8 ).map( tld => (
-						<Button
-							className={ classNames( { 'is-active': includes( selectedTlds, tld ) } ) }
-							data-selected={ includes( selectedTlds, tld ) }
-							key={ tld }
-							onClick={ this.toggleTldInFilter }
-							value={ tld }
-						>
-							.{ tld }
-						</Button>
-					) ) }
-				</CompactCard>
 			)
 		);
 	}
@@ -992,7 +969,18 @@ class RegisterDomainStep extends React.Component {
 				fetchAlgo={ fetchAlgo }
 				cart={ this.props.cart }
 			>
-				{ this.renderTldButtons() }
+				{ config.isEnabled( 'domains/kracken-ui/filters' ) && (
+					<TldFilterBar
+						availableTlds={ this.state.availableTlds }
+						filters={ this.state.filters }
+						lastFilters={ this.state.lastFilters }
+						numberOfTldsShown={ this.props.isSignupStep ? 8 : 5 }
+						onChange={ this.onFiltersChange }
+						onReset={ this.onFiltersReset }
+						onSubmit={ this.onFiltersSubmit }
+						showPlaceholder={ this.state.loadingResults || ! suggestions }
+					/>
+				) }
 			</DomainSearchResults>
 		);
 	}

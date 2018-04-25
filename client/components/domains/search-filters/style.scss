@@ -45,10 +45,16 @@
 
 	.button {
 		flex: 1 0 auto;
-		padding: 0.5em 3em 0.5em 3em;
 		margin-right: 1em;
 		&:last-child {
 			margin-right: 0;
+		}
+
+		&.search-filters__button--is-placeholder {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			background-color: $gray-lighten-30;
+			color: transparent;
+			height: 40px;
 		}
 	}
 }

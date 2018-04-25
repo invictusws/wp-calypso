@@ -32,6 +32,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import wpcom from 'lib/wp';
 import Card from 'components/card';
 import Notice from 'components/notice';
@@ -944,6 +945,8 @@ class RegisterDomainStep extends React.Component {
 			suggestions = this.props.defaultSuggestions || [];
 		}
 
+		const showTldFilterBar = abtest( 'showDomainTldFilterBar' ) === 'show';
+
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -969,7 +972,7 @@ class RegisterDomainStep extends React.Component {
 				fetchAlgo={ fetchAlgo }
 				cart={ this.props.cart }
 			>
-				{ config.isEnabled( 'domains/kracken-ui/filters' ) && (
+				{ showTldFilterBar && (
 					<TldFilterBar
 						availableTlds={ this.state.availableTlds }
 						filters={ this.state.filters }

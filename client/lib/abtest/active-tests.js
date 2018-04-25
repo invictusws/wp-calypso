@@ -108,4 +108,12 @@ export default {
 		},
 		defaultVariation: 'disabled',
 	},
+	showDomainTldFilterBar: {
+		datestamp: '20180509',
+		variations: {
+			hide: 50,
+			show: 50,
+		},
+		defaultVariation: 'hide',
+	},
 };

@@ -34,11 +34,9 @@ export default class SearchFilters extends Component {
 	};
 
 	updateFilterValues = ( name, value ) => {
-		const newFilters = {
-			...this.props.filters,
+		this.props.onChange( {
 			[ name ]: value,
-		};
-		this.props.onChange( newFilters );
+		} );
 	};
 
 	render() {

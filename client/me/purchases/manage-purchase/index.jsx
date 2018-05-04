@@ -87,11 +87,15 @@ class ManagePurchase extends Component {
 		destinationType: PropTypes.string,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		isAtomicSite: PropTypes.bool,
+		isPurchaseTheme: PropTypes.bool,
 		plan: PropTypes.object,
 		selectedPurchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedSite: PropTypes.object,
+		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
 		theme: PropTypes.object,
+		userId: PropTypes.number.isRequired,
 	};
 
 	componentWillMount() {
@@ -487,12 +491,12 @@ export default connect( ( state, props ) => {
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase,
 		isAtomicSite: siteId && isSiteAtomic( state, siteId ),
 		isPurchaseTheme,
 		plan: isPurchasePlan
 			? applyTestFiltersToPlansList( selectedPurchase.productSlug, abtest )
 			: undefined,
+		selectedPurchase,
 		selectedSite: getSite( state, siteId ),
 		siteId,
 		theme: isPurchaseTheme ? getCanonicalTheme( state, siteId, selectedPurchase.meta ) : undefined,

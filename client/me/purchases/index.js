@@ -62,7 +62,6 @@ export default function( router ) {
 		paths.managePurchase(),
 		redirectLoggedOut,
 		meController.sidebar,
-		siteSelection,
 		controller.managePurchase,
 		makeLayout,
 		clientRender

@@ -75,10 +75,14 @@ export class TldFilterBar extends Component {
 		this.props.onSubmit();
 	};
 	handleTokenChange = newTlds => {
-		this.props.onChange(
-			{ tlds: newTlds.filter( tld => includes( this.props.availableTlds, tld ) ) },
-			{ shouldSubmit: true }
-		);
+		const tlds = [
+			...new Set( [
+				...this.getSelectedSuggestedTlds(),
+				...newTlds.filter( tld => includes( this.props.availableTlds, tld ) ),
+			] ),
+		];
+
+		this.props.onChange( { tlds } );
 	};
 
 	togglePopover = () => {
@@ -87,54 +91,75 @@ export class TldFilterBar extends Component {
 		} );
 	};
 
+	getAvailableSuggestedTlds() {
+		return this.props.availableTlds.slice( 0, this.props.numberOfTldsShown );
+	}
+
+	getAvailableRegularTlds() {
+		return this.props.availableTlds.slice( this.props.numberOfTldsShown );
+	}
+
+	getSelectedSuggestedTlds() {
+		return this.props.filters.tlds.filter( tld =>
+			includes( this.getAvailableSuggestedTlds(), tld )
+		);
+	}
+
+	getSelectedRegularTlds() {
+		return this.props.filters.tlds.filter(
+			tld => ! includes( this.getAvailableSuggestedTlds(), tld )
+		);
+	}
+
 	render() {
 		if ( this.props.showPlaceholder ) {
 			return this.renderPlaceholder();
 		}
 
-		const {
-			availableTlds,
-			filters: { tlds },
-			lastFilters: { tlds: selectedTlds },
-			translate,
-			numberOfTldsShown,
-		} = this.props;
-		const hasFilterValue = tlds.length > 0;
-
 		return (
 			<CompactCard className="search-filters__buttons">
-				{ availableTlds.slice( 0, numberOfTldsShown ).map( ( tld, index ) => (
-					<Button
-						className={ classNames( { 'is-active': includes( selectedTlds, tld ) } ) }
-						data-selected={ includes( selectedTlds, tld ) }
-						data-index={ index }
-						key={ tld }
-						onClick={ this.handleButtonClick }
-						value={ tld }
-					>
-						.{ tld }
-					</Button>
-				) ) }
-				<Button
-					className={ classNames( { 'is-active': hasFilterValue } ) }
-					onClick={ this.togglePopover }
-					ref={ this.bindButton }
-					key="popover-button"
-				>
-					{ translate( 'More Extensions', {
-						context: 'TLD filter button',
-						comment: 'Refers to top level domain name extension, such as ".com"',
-					} ) }
-					<Gridicon icon="chevron-down" size={ 24 } />
-				</Button>
-
+				{ this.renderSuggestedButtons() }
+				{ this.renderPopoverButton() }
 				{ this.state.showPopover && this.renderPopover() }
 			</CompactCard>
 		);
 	}
 
+	renderSuggestedButtons() {
+		const { lastFilters: { tlds: selectedTlds } } = this.props;
+		return this.getAvailableSuggestedTlds().map( ( tld, index ) => (
+			<Button
+				className={ classNames( { 'is-active': includes( selectedTlds, tld ) } ) }
+				data-selected={ includes( selectedTlds, tld ) }
+				data-index={ index }
+				key={ tld }
+				onClick={ this.handleButtonClick }
+				value={ tld }
+			>
+				.{ tld }
+			</Button>
+		) );
+	}
+
+	renderPopoverButton() {
+		return (
+			<Button
+				className={ classNames( { 'is-active': this.getSelectedRegularTlds().length > 0 } ) }
+				onClick={ this.togglePopover }
+				ref={ this.bindButton }
+				key="popover-button"
+			>
+				{ this.props.translate( 'More Extensions', {
+					context: 'TLD filter button',
+					comment: 'Refers to top level domain name extension, such as ".com"',
+				} ) }
+				<Gridicon icon="chevron-down" size={ 24 } />
+			</Button>
+		);
+	}
+
 	renderPopover() {
-		const { filters: { tlds }, translate } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<Popover
@@ -148,11 +173,11 @@ export class TldFilterBar extends Component {
 				<FormFieldset className="search-filters__token-field-fieldset">
 					<TokenField
 						isExpanded
-						onChange={ this.handleOnChange }
+						onChange={ this.handleTokenChange }
 						placeholder={ translate( 'Select an extension' ) }
-						suggestions={ this.props.availableTlds }
+						suggestions={ this.getAvailableRegularTlds() }
 						tokenizeOnSpace
-						value={ tlds }
+						value={ this.getSelectedRegularTlds() }
 					/>
 				</FormFieldset>
 				<FormFieldset className="search-filters__buttons-fieldset">

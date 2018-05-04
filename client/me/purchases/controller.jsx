@@ -142,6 +142,7 @@ export default {
 			<ManagePurchase
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				destinationType={ context.params.destinationType }
+				siteSlug={ context.params.site }
 			/>
 		);
 		next();

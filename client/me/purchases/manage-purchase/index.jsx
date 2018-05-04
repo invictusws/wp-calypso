@@ -437,6 +437,8 @@ class ManagePurchase extends Component {
 					hasLoadedSites={ this.props.hasLoadedSites }
 					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
 					selectedSite={ selectedSite }
+					siteId={ siteId }
+					siteSlug={ this.props.siteSlug }
 					selectedPurchase={ selectedPurchase }
 				/>
 			</div>

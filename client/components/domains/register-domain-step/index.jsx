@@ -322,7 +322,8 @@ class RegisterDomainStep extends React.Component {
 
 	render() {
 		const queryObject = getQueryObject( this.props );
-
+		const { site, error, lastDomainSearched } = this.state;
+		const { message, severity } = getAvailabilityNotice( lastDomainSearched, error, site );
 		return (
 			<div className="register-domain-step">
 				<div className="register-domain-step__search">
@@ -345,8 +346,8 @@ class RegisterDomainStep extends React.Component {
 				{ this.renderSearchFilters() }
 				{ this.state.notice && (
 					<Notice
-						text={ this.state.notice }
-						status={ `is-${ this.state.noticeSeverity }` }
+						text={ message }
+						status={ `is-${ severity }` }
 						showDismiss={ false }
 					/>
 				) }
@@ -1051,9 +1052,7 @@ class RegisterDomainStep extends React.Component {
 		if ( ! site ) {
 			site = get( this.props, 'selectedSite.slug', null );
 		}
-
-		const { message, severity } = getAvailabilityNotice( domain, error, site );
-		this.setState( { notice: message, noticeSeverity: severity } );
+		this.setState( { notice: true, error, site } );
 	}
 }
 

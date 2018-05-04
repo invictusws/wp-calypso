@@ -23,10 +23,17 @@ import {
 } from 'my-sites/domains/paths';
 
 function getAvailabilityNotice( domain, error, site ) {
-	let message,
+	let message = translate(
+			'Sorry, there was a problem processing your request. Please try again in a few minutes.'
+		),
 		severity = 'error';
 
-	const tld = getTld( domain );
+	// Avoid going through the switch if we don't have to
+	if ( typeof error !== 'string' ) {
+		return message;
+	}
+
+	const tld = domain ? getTld( domain ) : null;
 
 	switch ( error ) {
 		case domainAvailability.REGISTERED:
@@ -256,11 +263,6 @@ function getAvailabilityNotice( domain, error, site ) {
 				'Your search term can only contain alphanumeric characters, spaces, dots, or hyphens.'
 			);
 			break;
-
-		default:
-			message = translate(
-				'Sorry, there was a problem processing your request. Please try again in a few minutes.'
-			);
 	}
 
 	return {

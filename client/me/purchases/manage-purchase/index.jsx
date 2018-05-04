@@ -3,13 +3,12 @@
 /**
  * External dependencies
  */
-
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 /**
  * Internal Dependencies
@@ -453,7 +452,7 @@ class ManagePurchase extends Component {
 		}
 
 		return (
-			<span>
+			<Fragment>
 				<QueryUserPurchases userId={ user.get().ID } />
 				{ isPurchaseTheme && (
 					<QueryCanonicalTheme siteId={ selectedSiteId } themeId={ selectedPurchase.meta } />
@@ -475,7 +474,7 @@ class ManagePurchase extends Component {
 					}
 					{ this.renderPurchaseDetail() }
 				</Main>
-			</span>
+			</Fragment>
 		);
 	}
 }

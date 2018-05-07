@@ -369,6 +369,7 @@ class Search extends Component {
 					/>
 					{ this.props.overlayStyling && this.renderStylingDiv() }
 				</div>
+				{ this.props.children }
 				{ this.closeButton() }
 			</div>
 		);

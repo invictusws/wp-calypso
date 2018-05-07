@@ -77,7 +77,7 @@ export class TldFilterBar extends Component {
 	handleTokenChange = newTlds => {
 		const tlds = [
 			...new Set( [
-				...this.getSelectedSuggestedTlds(),
+				...this.props.filters.tlds,
 				...newTlds.filter( tld => includes( this.props.availableTlds, tld ) ),
 			] ),
 		];
@@ -90,26 +90,6 @@ export class TldFilterBar extends Component {
 			showPopover: ! this.state.showPopover,
 		} );
 	};
-
-	getAvailableSuggestedTlds() {
-		return this.props.availableTlds.slice( 0, this.props.numberOfTldsShown );
-	}
-
-	getAvailableRegularTlds() {
-		return this.props.availableTlds.slice( this.props.numberOfTldsShown );
-	}
-
-	getSelectedSuggestedTlds() {
-		return this.props.filters.tlds.filter( tld =>
-			includes( this.getAvailableSuggestedTlds(), tld )
-		);
-	}
-
-	getSelectedRegularTlds() {
-		return this.props.filters.tlds.filter(
-			tld => ! includes( this.getAvailableSuggestedTlds(), tld )
-		);
-	}
 
 	render() {
 		if ( this.props.showPlaceholder ) {
@@ -127,24 +107,30 @@ export class TldFilterBar extends Component {
 
 	renderSuggestedButtons() {
 		const { lastFilters: { tlds: selectedTlds } } = this.props;
-		return this.getAvailableSuggestedTlds().map( ( tld, index ) => (
-			<Button
-				className={ classNames( { 'is-active': includes( selectedTlds, tld ) } ) }
-				data-selected={ includes( selectedTlds, tld ) }
-				data-index={ index }
-				key={ tld }
-				onClick={ this.handleButtonClick }
-				value={ tld }
-			>
-				.{ tld }
-			</Button>
-		) );
+		return this.props.availableTlds
+			.slice( 0, this.props.numberOfTldsShown )
+			.map( ( tld, index ) => (
+				<Button
+					className={ classNames( 'search-filters__tld-button', {
+						'is-active': includes( selectedTlds, tld ),
+					} ) }
+					data-selected={ includes( selectedTlds, tld ) }
+					data-index={ index }
+					key={ tld }
+					onClick={ this.handleButtonClick }
+					value={ tld }
+				>
+					.{ tld }
+				</Button>
+			) );
 	}
 
 	renderPopoverButton() {
 		return (
 			<Button
-				className={ classNames( { 'is-active': this.getSelectedRegularTlds().length > 0 } ) }
+				className={ classNames( 'search-filters__popover-button', {
+					'is-active': this.props.filters.tlds.length > 0,
+				} ) }
 				onClick={ this.togglePopover }
 				ref={ this.bindButton }
 				key="popover-button"
@@ -176,9 +162,9 @@ export class TldFilterBar extends Component {
 						maxSuggestions={ 500 }
 						onChange={ this.handleTokenChange }
 						placeholder={ translate( 'Select an extension' ) }
-						suggestions={ this.getAvailableRegularTlds() }
+						suggestions={ this.props.availableTlds }
 						tokenizeOnSpace
-						value={ this.getSelectedRegularTlds() }
+						value={ this.props.filters.tlds }
 					/>
 				</FormFieldset>
 				<FormFieldset className="search-filters__buttons-fieldset">

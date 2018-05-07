@@ -41,6 +41,7 @@
 
 .search-filters__buttons {
 	display: flex;
+	flex-flow: row wrap;
 	justify-content: space-between;
 
 	.button {
@@ -55,6 +56,27 @@
 			background-color: $gray-lighten-30;
 			color: transparent;
 			height: 40px;
+		}
+	}
+
+	@include breakpoint( '<960px' ) {
+		.search-filters__tld-button:nth-child(n + 8) {
+			display: none;
+		}
+	}
+	@include breakpoint( '<800px' ) {
+		.search-filters__tld-button:nth-child(n + 6) {
+			display: none;
+		}
+	}
+	@include breakpoint( '<660px' ) {
+		.search-filters__tld-button:nth-child(n + 4) {
+			display: none;
+		}
+	}
+	@include breakpoint( '<480px' ) {
+		.search-filters__tld-button:nth-child(n + 2) {
+			display: none;
 		}
 	}
 }

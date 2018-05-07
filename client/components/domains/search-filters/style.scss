@@ -1,13 +1,18 @@
 /** @format */
 
-.search-filters {
-	display: flex;
-}
-
-.search-filters__filter {
-	margin-right: 1em;
+.search-filters__dropdown-filters {
 	&:last-child {
-		margin-right: 0;
+		margin-right: 1em;
+	}
+	&.search-filters__dropdown-filters--has-filter-values {
+		.button {
+			color: $blue-medium;
+		}
+	}
+
+	.button .gridicons-list-unordered {
+		transition: 0.1s all linear;
+		top: 5px;
 	}
 }
 

@@ -46,7 +46,7 @@ import DomainTransferSuggestion from 'components/domains/domain-transfer-suggest
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
-import SearchFilters from 'components/domains/search-filters';
+import DropdownFilters from 'components/domains/search-filters/dropdown-filters';
 import { getCurrentUser } from 'state/current-user/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
@@ -340,9 +340,10 @@ class RegisterDomainStep extends React.Component {
 						delayTimeout={ 1000 }
 						dir="ltr"
 						maxLength={ 60 }
-					/>
+					>
+						{ this.renderSearchFilters() }
+					</SearchCard>
 				</div>
-				{ this.renderSearchFilters() }
 				{ this.state.notice && (
 					<Notice
 						text={ this.state.notice }
@@ -359,23 +360,24 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderSearchFilters() {
-		const isKrackenUi = config.isEnabled( 'domains/kracken-ui/filters' );
+		const isKrackenUi =
+			config.isEnabled( 'domains/kracken-ui/dashes-filter' ) ||
+			config.isEnabled( 'domains/kracken-ui/exact-match-filter' ) ||
+			config.isEnabled( 'domains/kracken-ui/max-characters-filter' );
 		const isRenderingInitialSuggestions =
 			! Array.isArray( this.state.searchResults ) &&
 			! this.state.loadingResults &&
 			! this.props.showExampleSuggestions;
+		const hasQuery = Boolean( getFixedDomainSearch( this.state.lastQuery ) );
+		const showFilters = isKrackenUi && ! isRenderingInitialSuggestions && hasQuery;
 		return (
-			isKrackenUi &&
-			! isRenderingInitialSuggestions && (
-				<div className="register-domain-step__filter">
-					<SearchFilters
-						availableTlds={ this.state.availableTlds }
-						filters={ this.state.filters }
-						onChange={ this.onFiltersChange }
-						onFiltersReset={ this.onFiltersReset }
-						onFiltersSubmit={ this.onFiltersSubmit }
-					/>
-				</div>
+			showFilters && (
+				<DropdownFilters
+					filters={ this.state.filters }
+					onChange={ this.onFiltersChange }
+					onReset={ this.onFiltersReset }
+					onSubmit={ this.onFiltersSubmit }
+				/>
 			)
 		);
 	}

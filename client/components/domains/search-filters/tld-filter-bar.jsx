@@ -173,6 +173,7 @@ export class TldFilterBar extends Component {
 				<FormFieldset className="search-filters__token-field-fieldset">
 					<TokenField
 						isExpanded
+						maxSuggestions={ 500 }
 						onChange={ this.handleTokenChange }
 						placeholder={ translate( 'Select an extension' ) }
 						suggestions={ this.getAvailableRegularTlds() }

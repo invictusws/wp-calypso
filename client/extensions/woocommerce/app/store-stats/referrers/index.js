@@ -70,16 +70,23 @@ class Referrers extends Component {
 
 	getSelectedReferrer = ( filteredSortedData, { queryParams } ) => {
 		let selectedReferrerIndex = null;
-		const selectedReferrer = find( filteredSortedData, ( d, idx ) => {
-			if ( queryParams.referrer && queryParams.referrer === d.referrer ) {
-				selectedReferrerIndex = idx;
-				return true;
-			}
-			return false;
-		} );
+		if ( queryParams.referrer ) {
+			const selectedReferrer = find( filteredSortedData, ( d, idx ) => {
+				if ( queryParams.referrer === d.referrer ) {
+					selectedReferrerIndex = idx;
+					return true;
+				}
+				return false;
+			} );
+			return {
+				selectedReferrer: selectedReferrer || {},
+				selectedReferrerIndex,
+			};
+		}
+
 		return {
-			selectedReferrer: selectedReferrer || filteredSortedData[ 0 ] || {},
-			selectedReferrerIndex: selectedReferrerIndex || 0,
+			selectedReferrer: {},
+			selectedReferrerIndex,
 		};
 	};
 
@@ -109,12 +116,11 @@ class Referrers extends Component {
 		} = this.state;
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
 		const showSearch = unfilteredDataLength > LIMIT;
-		const title = `${ translate( 'Store Referrers' ) }${
-			queryParams.referrer ? ': ' + queryParams.referrer : ''
-		}`;
+		const title = `${ translate( 'Store Referrers' ) }: ${ queryParams.referrer ||
+			translate( 'All' ) }`;
 		const chartFormat = UNITS[ unit ].chartFormat;
 		const periodNavQueryParams = Object.assign(
-			{ referrer: selectedReferrer.referrer },
+			{ referrer: selectedReferrer.referrer || 'all' },
 			queryParams
 		);
 

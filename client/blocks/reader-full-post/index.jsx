@@ -4,7 +4,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -76,6 +75,11 @@ export class FullPostView extends React.Component {
 	};
 
 	hasScrolledToCommentAnchor = false;
+
+	constructor( props ) {
+		super( props );
+		this.commentsWrapper = React.createRef();
+	}
 
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
@@ -214,7 +218,7 @@ export class FullPostView extends React.Component {
 
 		this._scrolling = true;
 		setTimeout( () => {
-			const commentsNode = ReactDom.findDOMNode( this.refs.commentsWrapper );
+			const commentsNode = this.commentsWrapper.current;
 			if ( commentsNode && commentsNode.offsetTop ) {
 				scrollTo( {
 					x: 0,
@@ -223,7 +227,7 @@ export class FullPostView extends React.Component {
 					onComplete: () => {
 						// check to see if the comment node moved while we were scrolling
 						// and scroll to the end position
-						const commentsNodeAfterScroll = ReactDom.findDOMNode( this.refs.commentsWrapper );
+						const commentsNodeAfterScroll = this.commentsWrapper.current;
 						if ( commentsNodeAfterScroll && commentsNodeAfterScroll.offsetTop ) {
 							window.scrollTo( 0, commentsNodeAfterScroll.offsetTop - 48 );
 						}
@@ -389,7 +393,7 @@ export class FullPostView extends React.Component {
 						</div>
 					</div>
 					<Emojify>
-						<article className="reader-full-post__story" ref="article">
+						<article className="reader-full-post__story">
 							<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
 							{ post.featured_image &&
@@ -451,7 +455,7 @@ export class FullPostView extends React.Component {
 								/>
 							) }
 
-							<div className="reader-full-post__comments-wrapper" ref="commentsWrapper">
+							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
 								{ shouldShowComments( post ) && (
 									<Comments
 										showNestingReplyArrow={ config.isEnabled( 'reader/nesting-arrow' ) }

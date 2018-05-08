@@ -175,3 +175,5 @@ export const referrerChartTabs = [
 ];
 
 export const dashboardListLimit = 3;
+
+export const noDataMsg = translate( 'No data found' );

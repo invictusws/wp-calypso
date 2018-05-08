@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { moment, translate } from 'i18n-calypso';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -27,6 +27,7 @@ import {
 	topProducts,
 	topCategories,
 	topCoupons,
+	noDataMsg,
 } from 'woocommerce/app/store-stats/constants';
 import { getEndPeriod, getQueries, getWidgetPath } from './utils';
 import QuerySiteStats from 'components/data/query-site-stats';
@@ -109,7 +110,7 @@ class StoreStats extends Component {
 						) }
 						<Module
 							siteId={ siteId }
-							emptyMessage={ translate( 'No data found' ) }
+							emptyMessage={ noDataMsg }
 							query={ referrerQuery }
 							statType="statsStoreReferrers"
 							header={
@@ -138,7 +139,7 @@ class StoreStats extends Component {
 						<div className="store-stats__widgets-column widgets" key={ index }>
 							<Module
 								siteId={ siteId }
-								emptyMessage={ translate( 'No data found' ) }
+								emptyMessage={ noDataMsg }
 								query={ orderQuery }
 								statType="statsOrders"
 							>

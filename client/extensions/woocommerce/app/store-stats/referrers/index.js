@@ -27,7 +27,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
 import { getStoreReferrersByDate } from 'state/selectors';
 import Chart from './chart';
-import { UNITS } from 'woocommerce/app/store-stats/constants';
+import { UNITS, noDataMsg } from 'woocommerce/app/store-stats/constants';
 
 const STAT_TYPE = 'statsStoreReferrers';
 const LIMIT = 10;
@@ -120,7 +120,7 @@ class Referrers extends Component {
 			translate( 'All' ) }`;
 		const chartFormat = UNITS[ unit ].chartFormat;
 		const periodNavQueryParams = Object.assign(
-			{ referrer: selectedReferrer.referrer || 'all' },
+			{ referrer: selectedReferrer.referrer },
 			queryParams
 		);
 
@@ -144,7 +144,7 @@ class Referrers extends Component {
 				<Module
 					className="referrers__chart"
 					siteId={ siteId }
-					emptyMessage={ translate( 'No data found' ) }
+					emptyMessage={ noDataMsg }
 					query={ query }
 					statType={ STAT_TYPE }
 				>
@@ -162,7 +162,7 @@ class Referrers extends Component {
 				<Module
 					className="referrers__search"
 					siteId={ siteId }
-					emptyMessage={ translate( 'No data found' ) }
+					emptyMessage={ noDataMsg }
 					query={ query }
 					statType={ STAT_TYPE }
 				>
